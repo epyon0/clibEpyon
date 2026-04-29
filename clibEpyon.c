@@ -160,3 +160,115 @@ void AnsiTextFaint() {
 void AnsiTextFaintReset() {
     AnsiTextDimReset();
 }
+// Set italic mode
+void AnsiTextItalic() {
+    printf("\033[3m");
+}
+// Reset italic mode
+void AnsiTextItalicReset() {
+    printf("\033[23m");
+}
+// Set underline mode
+void AnsiTextUnderline() {
+    printf("\033[4m");
+}
+// Reset underline mode
+void AnsiTextUnderlineReset() {
+    printf("\033[24m");
+}
+// Set blinking mode
+void AnsiTextBlinking() {
+    printf("\033[5m");
+}
+// Reset blinking mode
+void AnsiTextBlinkingReset() {
+    printf("\033[25m");
+}
+// Set inverse/reverse mode
+void AnsiTextInverse() {
+    printf("\033[7m");
+}
+// Reset inverse/reverse mode
+void AnsiTextInverseReset() {
+    printf("\033[27m");
+}
+// Set inverse/reverse mode
+void AnsiTextReverse() {
+    AnsiTextInverse();
+}
+// Reset inverse/reverse mode
+void AnsiTextReverseReset() {
+    AnsiTextInverseReset();
+}
+// Set hidden/invisible mode
+void AnsiTextHidden() {
+    printf("\033[8m");
+}
+// Reset hidden/invisible mode
+void AnsiTextHiddenReset() {
+    printf("\033[28m");
+}
+// Set hidden/invisible mode
+void AnsiTextInvisible() {
+    AnsiTextHidden();
+}
+// Reset hidden/invisible mode
+void AnsiTextInvisibleReset() {
+    AnsiTextHiddenReset();
+}
+// Set strikthrough mode
+void AnsiTextStrikethrough() {
+    printf("\033[9m");
+}
+// Reset strikethrough mode
+void AnsiTextStrikethroughReset() {
+    printf("\033[29m");
+}
+// Set foreground color
+void AnsiColorBlackFG() {
+    printf("\033[30m");
+}
+// Set background color
+void AnsiColorBlackBG() {
+    printf("\033[40m");
+}
+// Set foreground color
+void AnsiColorRedFG() {
+    printf("\033[31m");
+}
+// Set background color
+void AnsiColorRedBG() {
+    printf("\033[41m");
+}
+
+
+
+
+
+
+
+
+
+
+// TESTING
+int main() {
+    printf("TEST1\n");
+    AnsiTextBlinking();
+    printf("TEST2\n");
+    AnsiTextBlinkingReset();
+    AnsiTextBold();
+    printf("TEST3\n");
+    AnsiTextBoldReset();
+    AnsiTextItalic();
+    printf("TEST4\n");
+    AnsiTextItalicReset();
+    AnsiTextUnderline();
+    printf("TEST5\n");
+    AnsiTextUnderlineReset();
+    printf("TEST6");
+    AnsiTextStrikethrough();
+    AnsiColorRedFG();
+    printf("TEST7");
+    AnsiTextStrikethroughReset();
+    printf("TEST8\n");
+}
