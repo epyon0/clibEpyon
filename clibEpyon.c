@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
+#include <math.h>
 
 // Print formated 'text' to STDERR, displays date time, caller function (__func__), and line number (__LINE__)
 void debug(const char *text, const char *func, const int line) {
@@ -27,6 +29,50 @@ void truncString(char *text, int length) {
         }
     }
 }
+
+// Return string of the value of 'number' of bytes in a human readable format (i.e. GB, TiB, MB, etc)
+char * humanizeBytes(unsigned long long number, bool SIuints) {
+    static char buffer[200];
+    if (SIuints) {
+        if (number >= pow(10,18)) {
+            snprintf(buffer, sizeof(buffer), "%0.2f EB", number / pow(10,18));
+        } else if (number >= pow(10,15)) {
+            snprintf(buffer, sizeof(buffer), "%0.2f PB", number / pow(10,15));
+        } else if (number >= pow(10,12)) {
+            snprintf(buffer, sizeof(buffer), "%0.2f TB", number / pow(10,12));
+        } else if (number >= pow(10,9)) {
+            snprintf(buffer, sizeof(buffer), "%0.2f GB", number / pow(10,9));
+        } else if (number >= pow(10,6)) {
+            snprintf(buffer, sizeof(buffer), "%0.2f MB", number / pow(10,6));
+        } else if (number >= pow(10,3)) {
+            snprintf(buffer, sizeof(buffer), "%0.2f KB", number / pow(10,3));
+        } else {
+            snprintf(buffer, sizeof(buffer), "%llu B", number);
+        }
+    } else {
+if (number >= pow(2,60)) {
+            snprintf(buffer, sizeof(buffer), "%0.2f EiB", number / pow(2,60));
+        } else if (number >= pow(2,50)) {
+            snprintf(buffer, sizeof(buffer), "%0.2f PiB", number / pow(2,50));
+        } else if (number >= pow(2,40)) {
+            snprintf(buffer, sizeof(buffer), "%0.2f TiB", number / pow(2,40));
+        } else if (number >= pow(2,30)) {
+            snprintf(buffer, sizeof(buffer), "%0.2f GiB", number / pow(2,30));
+        } else if (number >= pow(2,20)) {
+            snprintf(buffer, sizeof(buffer), "%0.2f MiB", number / pow(2,20));
+        } else if (number >= pow(2,10)) {
+            snprintf(buffer, sizeof(buffer), "%0.2f KiB", number / pow(2,10));
+        } else {
+            snprintf(buffer, sizeof(buffer), "%llu B", number);
+        }
+    }
+
+    return buffer;
+}
+
+/////////////////
+// ANSI CURSOR //
+/////////////////
 
 // Move cursor to home position (0,0)
 void AnsiCursorHome() {
@@ -124,6 +170,7 @@ void AnsiScreenRestore() {
 void AnsiScreenSave() {
     printf("\033[?47h");
 }
+
 // Enables the alternative buffer
 void AnsiEnableAltBuffer() {
     printf("\033[?1049h");
@@ -132,6 +179,11 @@ void AnsiEnableAltBuffer() {
 void AnsiDisableAltBuffer() {
     printf("\033[?1049l");
 }
+
+///////////////
+// ANSI TEXT //
+///////////////
+
 // Reset all modes (styles and colors)
 void AnsiReset() {
     printf("\033[0m");
@@ -224,6 +276,11 @@ void AnsiTextStrikethrough() {
 void AnsiTextStrikethroughReset() {
     printf("\033[29m");
 }
+
+////////////////
+// ANSI COLOR //
+////////////////
+
 // Set foreground color
 void AnsiColorBlackFG() {
     printf("\033[30m");
@@ -240,6 +297,154 @@ void AnsiColorRedFG() {
 void AnsiColorRedBG() {
     printf("\033[41m");
 }
+// Set foreground color
+void AnsiColorGreenFG() {
+    printf("\033[32m");
+}
+// Set background color
+void AnsiColorGreenBG() {
+    printf("\033[42m");
+}
+// Set foreground color
+void AnsiColorYellowFG() {
+    printf("\033[33m");
+}
+// Set background color
+void AnsiColorYellowBG() {
+    printf("\033[43m");
+}
+// Set foreground color
+void AnsiColorBlueFG() {
+    printf("\033[34m");
+}
+// Set background color
+void AnsiColorBlueBG() {
+    printf("\033[44m");
+}
+// Set foreground color
+void AnsiColorMagentaFG() {
+    printf("\033[35m");
+}
+// Set background color
+void AnsiColorMagentaBG() {
+    printf("\033[45m");
+}
+// Set foreground color
+void AnsiColorCyanFG() {
+    printf("\033[36m");
+}
+// Set background color
+void AnsiColorCyanBG() {
+    printf("\033[46m");
+}
+// Set foreground color
+void AnsiColorWhiteFG() {
+    printf("\033[37m");
+}
+// Set background color
+void AnsiColorWhiteBG() {
+    printf("\033[47m");
+}
+// Set foreground color
+void AnsiColorDefaultFG() {
+    printf("\033[39m");
+}
+// Set background color
+void AnsiColorDefaultBG() {
+    printf("\033[49m");
+}
+// Set foreground color
+void AnsiColorBlackBrightFG() {
+    printf("\033[90m");
+}
+// Set background color
+void AnsiColorBlackBrightBG() {
+    printf("\033[100m");
+}
+// Set foreground color
+void AnsiColorRedBrightFG() {
+    printf("\033[91m");
+}
+// Set background color
+void AnsiColorRedBrightBG() {
+    printf("\033[101m");
+}
+// Set foreground color
+void AnsiColorGreenBrightFG() {
+    printf("\033[92m");
+}
+// Set background color
+void AnsiColorGreenBrightBG() {
+    printf("\033[102m");
+}
+// Set foreground color
+void AnsiColorYellowBrightFG() {
+    printf("\033[93m");
+}
+// Set background color
+void AnsiColorYellowBrightBG() {
+    printf("\033[103m");
+}
+// Set foreground color
+void AnsiColorBlueBrightFG() {
+    printf("\033[94m");
+}
+// Set background color
+void AnsiColorBlueBrightBG() {
+    printf("\033[104m");
+}
+// Set foreground color
+void AnsiColorMagentaBrightFG() {
+    printf("\033[95m");
+}
+// Set background color
+void AnsiColorMagentaBrightBG() {
+    printf("\033[105m");
+}
+// Set foreground color
+void AnsiColorCyanBrightFG() {
+    printf("\033[96m");
+}
+// Set background color
+void AnsiColorCyanBrightBG() {
+    printf("\033[106m");
+}
+// Set foreground color
+void AnsiColorWhiteBrightFG() {
+    printf("\033[97m");
+}
+// Set background color
+void AnsiColorWhiteBrightBG() {
+    printf("\033[107m");
+}
+// Set foreground 256-bit color of value 'value'
+void AnsiColor256FG(char value) {
+    printf("\033[38;5;%cm", value);
+}
+// Set background 256-bit color of value 'value'
+void AnsiColor256BG(char value) {
+    printf("\033[48;5;%cm", value);
+}
+// Set foreground RBG color
+void AnsiColorRgbFG(char red, char green, char blue) {
+    printf("\033[38;2;%c;%c;%cm", red, green, blue);
+}
+// Set foreground RBG color
+void AnsiColorRgbBG(char red, char green, char blue) {
+    printf("\033[48;2;%c;%c;%cm", red, green, blue);
+}
+
+/////////////////
+// ANSI SCREEN //
+/////////////////
+
+// Set screen mode to 40 x 25 monochrome (text)
+void AnsiScreenMode40x25Monochrome() {
+    printf("\033[=0h");
+}
+
+
+
 
 
 
@@ -271,4 +476,15 @@ int main() {
     printf("TEST7");
     AnsiTextStrikethroughReset();
     printf("TEST8\n");
+
+    char * testString = humanizeBytes(12345, true);
+    printf("%s\n", testString);
+    testString = humanizeBytes(333333333, false);
+    printf("%s\n", testString);
+    testString = humanizeBytes(345234535345345, true);
+    printf("%s\n", testString);
+    testString = humanizeBytes(3452343452533345324, false);
+    printf("%s\n", testString);
+    testString = humanizeBytes(234, false);
+    printf("%s\n", testString);
 }
