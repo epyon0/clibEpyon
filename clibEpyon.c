@@ -33,6 +33,120 @@ char * readPipe(size_t nbytes) {
     return buffer;
 }
 
+char * asciiChar(char byte) {
+    char * output = malloc(4);
+    if (byte < 33 || byte == 127) {
+        switch (byte) {
+            case 0:
+                output = "NUL";
+                break;
+            case 1:
+                output = "SOH";
+                break;
+            case 2:
+                output = "STX";
+                break;
+            case 3:
+                output = "ETX";
+                break;
+            case 4:
+                output = "EOT";
+                break;
+            case 5:
+                output = "ENQ";
+                break;
+            case 6:
+                output = "ACK";
+                break;
+            case 7:
+                output = "BEL";
+                break;
+            case 8:
+                output = "BS ";
+                break;
+            case 9:
+                output = "HT ";
+                break;
+            case 10:
+                output = "LF ";
+                break;
+            case 11:
+                output = "VT ";
+                break;
+            case 12:
+                output = "FF ";
+                break;
+            case 13:
+                output = "CR ";
+                break;
+            case 14:
+                output = "SO ";
+                break;
+            case 15:
+                output = "SI ";
+                break;
+            case 16:
+                output = "DLE";
+                break;
+            case 17:
+                output = "DC1";
+                break;
+            case 18:
+                output = "DC2";
+                break;
+            case 19:
+                output = "DC3";
+                break;
+            case 20:
+                output = "DC4";
+                break;
+            case 21:
+                output = "NAK";
+                break;
+            case 22:
+                output = "SYN";
+                break;
+            case 23:
+                output = "ETB";
+                break;
+            case 24:
+                output = "CAN";
+                break;
+            case 25:
+                output = "EM ";
+                break;
+            case 26:
+                output = "SUB";
+                break;
+            case 27:
+                output = "ESC";
+                break;
+            case 28:
+                output = "FS ";
+                break;
+            case 29:
+                output = "GS ";
+                break;
+            case 30:
+                output = "RS ";
+                break;
+            case 31:
+                output = "US ";
+                break;
+            case 32:
+                output = "SP ";
+                break;
+            case 127:
+                output = "DEL";
+                break;
+            
+        }
+    } else {
+        snprintf(output, sizeof(output), " %c ", byte);
+    }
+    return  output;
+}
+
 // Truncate string to length
 char * truncString(char *text, size_t length) {
     char * buffer = calloc(length + 1, sizeof(char));
@@ -497,6 +611,20 @@ int main() {
         //testOutput[sizeof(testOutput)/sizeof(char)] = '\0';
         printf("PIPE[%d]: [%s]\n", i, testOutput);
     }
+
+
+    size_t n = 1024 * 2;
+    char * randomMemory = malloc(n);
+    for (int i = 0; i < n; i++) {
+        //printf("%03u 0x%hhX [%s]\n", randomMemory[i], randomMemory[i], asciiChar(randomMemory[i]));
+        if (randomMemory[i] > 32 && randomMemory[i] != 127) {
+            //printf("%s ", asciiChar(randomMemory[i]));
+            printf("%c", randomMemory[i]);
+        } else {
+            printf("\n");
+        }
+    }
+
 
 
 }
