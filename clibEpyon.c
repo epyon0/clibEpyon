@@ -1,37 +1,53 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
 #include <math.h>
+#include <unistd.h>
 
 // Print formated 'text' to STDERR, displays date time, caller function (__func__), and line number (__LINE__)
-void debug(const char *text, const char *func, const int line) {
+void debug(const char *text, bool enabled, const char *func, const int line) {
     time_t now = time(NULL);
     struct tm *t_info = localtime(&now);
     char buf[25];
-    strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%Sz", t_info);
-    
-    fprintf(stderr, "%s | %s:%d | %s\n", buf, func, line, text);
+    if (enabled) {
+        strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%Sz", t_info);
+        fprintf(stderr, "%s | %s:%d | %s\n", buf, func, line, text);
+    }
 }
 
-// Truncate string to length, negative values truncate from begining of string
-void truncString(char *text, int length) {
-    if (length < strlen(text) && length >= 0) {
-        text[length] = '\0';
+// Returns true if there is a pipe from STDIN
+bool isPipe() {
+    return !isatty(STDIN_FILENO);
+}
+
+// Returns (nbytes + 1) from STDIN, last byte is a NULL byte
+char * readPipe(size_t nbytes) {
+    char * buffer = calloc(nbytes + 1, sizeof(char));
+    if (buffer && isPipe()) {
+        size_t rbytes = fread(buffer, sizeof(char), nbytes, stdin);
+        buffer[nbytes] = '\0';
     }
 
-    if (length < 0) {
-        length = length * -1;
-        for (int i = 0; i < length; i++) {
-            for (int j = 1; j <= strlen(text); j++) {
-                text[j-1] = text[j];
-            }
-        }
+    return buffer;
+}
+
+// Truncate string to length
+char * truncString(char *text, size_t length) {
+    char * buffer = calloc(length + 1, sizeof(char));
+    if (buffer) {
+        if (length >= 0) {
+            strncpy(buffer, text, length);
+            buffer[length] = '\0';
+        } 
     }
+
+    return buffer;
 }
 
 // Return string of the value of 'number' of bytes in a human readable format (i.e. GB, TiB, MB, etc)
-char * humanizeBytes(unsigned long long number, bool SIuints) {
+char * humanizeBytes(long long unsigned  number, bool SIuints) {
     static char buffer[200];
     if (SIuints) {
         if (number >= pow(10,18)) {
@@ -438,15 +454,15 @@ void AnsiColorRgbBG(char red, char green, char blue) {
 // ANSI SCREEN //
 /////////////////
 
-// Set screen mode to 40 x 25 monochrome (text)
-void AnsiScreenMode40x25Monochrome() {
-    printf("\033[=0h");
+// Enables line wrapping
+void AnsiScreenModeLineWrapping() {
+    printf("\033[=7h");
 }
 
-
-
-
-
+// Disables line wrapping
+void AnsiScreenModeLineWrappingReset() {
+    printf("\033[=7l");
+}
 
 
 
@@ -457,34 +473,30 @@ void AnsiScreenMode40x25Monochrome() {
 
 // TESTING
 int main() {
-    printf("TEST1\n");
-    AnsiTextBlinking();
-    printf("TEST2\n");
-    AnsiTextBlinkingReset();
-    AnsiTextBold();
-    printf("TEST3\n");
-    AnsiTextBoldReset();
-    AnsiTextItalic();
-    printf("TEST4\n");
-    AnsiTextItalicReset();
-    AnsiTextUnderline();
-    printf("TEST5\n");
-    AnsiTextUnderlineReset();
-    printf("TEST6");
-    AnsiTextStrikethrough();
-    AnsiColorRedFG();
-    printf("TEST7");
-    AnsiTextStrikethroughReset();
-    printf("TEST8\n");
-
     char * testString = humanizeBytes(12345, true);
-    printf("%s\n", testString);
-    testString = humanizeBytes(333333333, false);
-    printf("%s\n", testString);
-    testString = humanizeBytes(345234535345345, true);
-    printf("%s\n", testString);
-    testString = humanizeBytes(3452343452533345324, false);
-    printf("%s\n", testString);
-    testString = humanizeBytes(234, false);
-    printf("%s\n", testString);
+
+    debug("DEBUG TEST", true, __func__, __LINE__);
+    debug("DEBUG TEST2", false, __func__, __LINE__);
+    
+
+    for (long long i = 0; i < 13; i++) {
+        testString = truncString("1234567890", i);
+        printf("LEN:%lld  %s\n", i, testString);
+    }
+    for (long long i = 0; i > -13; i--) {
+        testString = truncString("1234567890", i);
+        printf("LEN:%lld  %s\n", i, testString);
+    }
+
+    printf("IS PIPE: %s\n", isPipe() ? "true" : "false");
+
+    for (int i = 0; i < 15; i++) {
+        //char * testOutput = malloc((i + 1) * sizeof(char));
+        char * testOutput = malloc(i * sizeof(char));
+        testOutput = readPipe(i);
+        //testOutput[sizeof(testOutput)/sizeof(char)] = '\0';
+        printf("PIPE[%d]: [%s]\n", i, testOutput);
+    }
+
+
 }
