@@ -22,12 +22,11 @@ bool isPipe() {
     return !isatty(STDIN_FILENO);
 }
 
-// Returns (nbytes + 1) from STDIN, last byte is a NULL byte
+// Returns (nbytes + 1) from STDIN
 char * readPipe(size_t nbytes) {
-    char * buffer = calloc(nbytes + 1, sizeof(char));
+    char * buffer = calloc(nbytes, sizeof(char));
     if (buffer && isPipe()) {
         size_t rbytes = fread(buffer, sizeof(char), nbytes, stdin);
-        buffer[nbytes] = '\0';
     }
 
     return buffer;
@@ -205,108 +204,108 @@ if (number >= pow(2,60)) {
 /////////////////
 
 // Move cursor to home position (0,0)
-void AnsiCursorHome() {
+void ansiCursorHome() {
     printf("\033[H]");
 }
 // Move cursor to position (row,column)
-void AnsiCursorMove(int row, int column) {
+void ansiCursorMove(int row, int column) {
     printf("\033[%d;%dH]", row, column);
 }
 // Move cursor up 'count' lines
-void AnsiCursorUp(int count) {
+void ansiCursorUp(int count) {
     printf("\0333[%dA", count);
 }
 // Move cursor down 'count' lines
-void AnsiCursorDown(int count) {
+void ansiCursorDown(int count) {
     printf("\033[%dB", count);
 }
 // Move cursor right 'count' columns
-void AnsiCursorRight(int count) {
+void ansiCursorRight(int count) {
     printf("\033[%dC", count);
 }
 // Move cursor left 'count' columns
-void AnsiCursorLeft(int count) {
+void ansiCursorLeft(int count) {
     printf("\033[%dD", count);
 }
 // Move cursor to beginning of next line, 'count' lines down
-void AnsiDownBeginning(int count) {
+void ansiDownBeginning(int count) {
     printf("\033[%dE", count);
 }
 // Move cursor to 'column'
-void AnsiCursorColumn(int column) {
+void ansiCursorColumn(int column) {
     printf("\033[%dG", column);
 }
 // Request cursor position
-void AnsiCursorPosition() {
+void ansiCursorPosition() {
     printf("\033[6n");
 }
 // Move cursor one line up, scrolling if needed
-void AnsiCursorUpOne() {
+void ansiCursorUpOne() {
     printf("\033 M");
 }
 // Save cursor position (DEC) (recommended)
-void AnsiCursorSavePos() {
+void ansiCursorSavePos() {
     printf("\033 7");
 }
 // Restores the cursor to the last saved position (DEC)
-void AnsiCursorLoadPos() {
+void ansiCursorLoadPos() {
     printf("\033 8");
 }
 // Save cursor position (SCO)
-void AnsiCursorSavePosSCO() {
+void ansiCursorSavePosSCO() {
     printf("\033[s");
 }
 // Restores the cursor to the last saved position (SCO)
-void AnsiCursorLoadPosSCO() {
+void ansiCursorLoadPosSCO() {
     printf("\033[u");
 }
 // Erase from cursor to beginning of screen
-void AnsiCursorEraseScreenEnd() {
+void ansiCursorEraseScreenEnd() {
     printf("\033[0J");
 }
 // Erase entire screen
-void AnsiCursorEraseScreenAll() {
+void ansiCursorEraseScreenAll() {
     printf("\033[2J");
 }
 // Erase saved lines
-void AnsiCursorEraseSavedLines() {
+void ansiCursorEraseSavedLines() {
     printf("\033[3J");
 }
 // Erase from cursor to end of line
-void AnsiCursorEraseLineEnd() {
+void ansiCursorEraseLineEnd() {
     printf("\033[0K");
 }
 // Erase from start of line to the cursor
-void AnsiCursorEraseLineBeginning() {
+void ansiCursorEraseLineBeginning() {
     printf("\033[1K");
 }
 // Erase the entire line
-void AnsiCursorEraseLineAll() {
+void ansiCursorEraseLineAll() {
     printf("\033[2K");
 }
 // Make cursor invisible
-void AnsiCursorInvisible() {
+void ansiCursorInvisible() {
     printf("\033[?25l");
 }
 // Make cursor visible
-void AnsiCursorVisible() {
+void ansiCursorVisible() {
     printf("\033[?25h");
 }
 // Restore screen
-void AnsiScreenRestore() {
+void ansiScreenRestore() {
     printf("\033[?47l");
 }
 // Save screen
-void AnsiScreenSave() {
+void ansiScreenSave() {
     printf("\033[?47h");
 }
 
 // Enables the alternative buffer
-void AnsiEnableAltBuffer() {
+void ansiEnableAltBuffer() {
     printf("\033[?1049h");
 }
 // Disable the alternative buffer
-void AnsiDisableAltBuffer() {
+void ansiDisableAltBuffer() {
     printf("\033[?1049l");
 }
 
@@ -315,95 +314,95 @@ void AnsiDisableAltBuffer() {
 ///////////////
 
 // Reset all modes (styles and colors)
-void AnsiReset() {
+void ansiReset() {
     printf("\033[0m");
 }
 // Set bold mode
-void AnsiTextBold() {
+void ansiTextBold() {
     printf("\033[1m");
 }
 // Reset bold mode (and dim/faint modes)
-void AnsiTextBoldReset() {
+void ansiTextBoldReset() {
     printf("\033[22m");
 }
 // Set dim/faint mode
-void AnsiTextDim() {
+void ansiTextDim() {
     printf("\033[2m");
 }
 // Reset dim/faint mode (and bold mode)
-void AnsiTextDimReset() {
-    AnsiTextBoldReset();
+void ansiTextDimReset() {
+    ansiTextBoldReset();
 }
 // Set dim/faint mode
-void AnsiTextFaint() {
-    AnsiTextDim();
+void ansiTextFaint() {
+    ansiTextDim();
 }
 // Reset dim/faint mode (and bold mode)
-void AnsiTextFaintReset() {
-    AnsiTextDimReset();
+void ansiTextFaintReset() {
+    ansiTextDimReset();
 }
 // Set italic mode
-void AnsiTextItalic() {
+void ansiTextItalic() {
     printf("\033[3m");
 }
 // Reset italic mode
-void AnsiTextItalicReset() {
+void ansiTextItalicReset() {
     printf("\033[23m");
 }
 // Set underline mode
-void AnsiTextUnderline() {
+void ansiTextUnderline() {
     printf("\033[4m");
 }
 // Reset underline mode
-void AnsiTextUnderlineReset() {
+void ansiTextUnderlineReset() {
     printf("\033[24m");
 }
 // Set blinking mode
-void AnsiTextBlinking() {
+void ansiTextBlinking() {
     printf("\033[5m");
 }
 // Reset blinking mode
-void AnsiTextBlinkingReset() {
+void ansiTextBlinkingReset() {
     printf("\033[25m");
 }
 // Set inverse/reverse mode
-void AnsiTextInverse() {
+void ansiTextInverse() {
     printf("\033[7m");
 }
 // Reset inverse/reverse mode
-void AnsiTextInverseReset() {
+void ansiTextInverseReset() {
     printf("\033[27m");
 }
 // Set inverse/reverse mode
-void AnsiTextReverse() {
-    AnsiTextInverse();
+void ansiTextReverse() {
+    ansiTextInverse();
 }
 // Reset inverse/reverse mode
-void AnsiTextReverseReset() {
-    AnsiTextInverseReset();
+void ansiTextReverseReset() {
+    ansiTextInverseReset();
 }
 // Set hidden/invisible mode
-void AnsiTextHidden() {
+void ansiTextHidden() {
     printf("\033[8m");
 }
 // Reset hidden/invisible mode
-void AnsiTextHiddenReset() {
+void ansiTextHiddenReset() {
     printf("\033[28m");
 }
 // Set hidden/invisible mode
-void AnsiTextInvisible() {
-    AnsiTextHidden();
+void ansiTextInvisible() {
+    ansiTextHidden();
 }
 // Reset hidden/invisible mode
-void AnsiTextInvisibleReset() {
-    AnsiTextHiddenReset();
+void ansiTextInvisibleReset() {
+    ansiTextHiddenReset();
 }
 // Set strikthrough mode
-void AnsiTextStrikethrough() {
+void ansiTextStrikethrough() {
     printf("\033[9m");
 }
 // Reset strikethrough mode
-void AnsiTextStrikethroughReset() {
+void ansiTextStrikethroughReset() {
     printf("\033[29m");
 }
 
@@ -412,155 +411,155 @@ void AnsiTextStrikethroughReset() {
 ////////////////
 
 // Set foreground color
-void AnsiColorBlackFG() {
+void ansiColorBlackFG() {
     printf("\033[30m");
 }
 // Set background color
-void AnsiColorBlackBG() {
+void ansiColorBlackBG() {
     printf("\033[40m");
 }
 // Set foreground color
-void AnsiColorRedFG() {
+void ansiColorRedFG() {
     printf("\033[31m");
 }
 // Set background color
-void AnsiColorRedBG() {
+void ansiColorRedBG() {
     printf("\033[41m");
 }
 // Set foreground color
-void AnsiColorGreenFG() {
+void ansiColorGreenFG() {
     printf("\033[32m");
 }
 // Set background color
-void AnsiColorGreenBG() {
+void ansiColorGreenBG() {
     printf("\033[42m");
 }
 // Set foreground color
-void AnsiColorYellowFG() {
+void ansiColorYellowFG() {
     printf("\033[33m");
 }
 // Set background color
-void AnsiColorYellowBG() {
+void ansiColorYellowBG() {
     printf("\033[43m");
 }
 // Set foreground color
-void AnsiColorBlueFG() {
+void ansiColorBlueFG() {
     printf("\033[34m");
 }
 // Set background color
-void AnsiColorBlueBG() {
+void ansiColorBlueBG() {
     printf("\033[44m");
 }
 // Set foreground color
-void AnsiColorMagentaFG() {
+void ansiColorMagentaFG() {
     printf("\033[35m");
 }
 // Set background color
-void AnsiColorMagentaBG() {
+void ansiColorMagentaBG() {
     printf("\033[45m");
 }
 // Set foreground color
-void AnsiColorCyanFG() {
+void ansiColorCyanFG() {
     printf("\033[36m");
 }
 // Set background color
-void AnsiColorCyanBG() {
+void ansiColorCyanBG() {
     printf("\033[46m");
 }
 // Set foreground color
-void AnsiColorWhiteFG() {
+void ansiColorWhiteFG() {
     printf("\033[37m");
 }
 // Set background color
-void AnsiColorWhiteBG() {
+void ansiColorWhiteBG() {
     printf("\033[47m");
 }
 // Set foreground color
-void AnsiColorDefaultFG() {
+void ansiColorDefaultFG() {
     printf("\033[39m");
 }
 // Set background color
-void AnsiColorDefaultBG() {
+void ansiColorDefaultBG() {
     printf("\033[49m");
 }
 // Set foreground color
-void AnsiColorBlackBrightFG() {
+void ansiColorBlackBrightFG() {
     printf("\033[90m");
 }
 // Set background color
-void AnsiColorBlackBrightBG() {
+void ansiColorBlackBrightBG() {
     printf("\033[100m");
 }
 // Set foreground color
-void AnsiColorRedBrightFG() {
+void ansiColorRedBrightFG() {
     printf("\033[91m");
 }
 // Set background color
-void AnsiColorRedBrightBG() {
+void ansiColorRedBrightBG() {
     printf("\033[101m");
 }
 // Set foreground color
-void AnsiColorGreenBrightFG() {
+void ansiColorGreenBrightFG() {
     printf("\033[92m");
 }
 // Set background color
-void AnsiColorGreenBrightBG() {
+void ansiColorGreenBrightBG() {
     printf("\033[102m");
 }
 // Set foreground color
-void AnsiColorYellowBrightFG() {
+void ansiColorYellowBrightFG() {
     printf("\033[93m");
 }
 // Set background color
-void AnsiColorYellowBrightBG() {
+void ansiColorYellowBrightBG() {
     printf("\033[103m");
 }
 // Set foreground color
-void AnsiColorBlueBrightFG() {
+void ansiColorBlueBrightFG() {
     printf("\033[94m");
 }
 // Set background color
-void AnsiColorBlueBrightBG() {
+void ansiColorBlueBrightBG() {
     printf("\033[104m");
 }
 // Set foreground color
-void AnsiColorMagentaBrightFG() {
+void ansiColorMagentaBrightFG() {
     printf("\033[95m");
 }
 // Set background color
-void AnsiColorMagentaBrightBG() {
+void ansiColorMagentaBrightBG() {
     printf("\033[105m");
 }
 // Set foreground color
-void AnsiColorCyanBrightFG() {
+void ansiColorCyanBrightFG() {
     printf("\033[96m");
 }
 // Set background color
-void AnsiColorCyanBrightBG() {
+void ansiColorCyanBrightBG() {
     printf("\033[106m");
 }
 // Set foreground color
-void AnsiColorWhiteBrightFG() {
+void ansiColorWhiteBrightFG() {
     printf("\033[97m");
 }
 // Set background color
-void AnsiColorWhiteBrightBG() {
+void ansiColorWhiteBrightBG() {
     printf("\033[107m");
 }
 // Set foreground 256-bit color of value 'value'
-void AnsiColor256FG(char value) {
+void ansiColor256FG(char value) {
     printf("\033[38;5;%cm", value);
 }
 // Set background 256-bit color of value 'value'
-void AnsiColor256BG(char value) {
+void ansiColor256BG(char value) {
     printf("\033[48;5;%cm", value);
 }
 // Set foreground RBG color
-void AnsiColorRgbFG(char red, char green, char blue) {
+void ansiColorRgbFG(char red, char green, char blue) {
     printf("\033[38;2;%c;%c;%cm", red, green, blue);
 }
 // Set foreground RBG color
-void AnsiColorRgbBG(char red, char green, char blue) {
+void ansiColorRgbBG(char red, char green, char blue) {
     printf("\033[48;2;%c;%c;%cm", red, green, blue);
 }
 
@@ -569,12 +568,12 @@ void AnsiColorRgbBG(char red, char green, char blue) {
 /////////////////
 
 // Enables line wrapping
-void AnsiScreenModeLineWrapping() {
+void ansiScreenModeLineWrapping() {
     printf("\033[=7h");
 }
 
 // Disables line wrapping
-void AnsiScreenModeLineWrappingReset() {
+void ansiScreenModeLineWrappingReset() {
     printf("\033[=7l");
 }
 
@@ -589,10 +588,11 @@ void AnsiScreenModeLineWrappingReset() {
 int main() {
     char * testString = humanizeBytes(12345, true);
 
+    ansiColorBlueFG();
     debug("DEBUG TEST", true, __func__, __LINE__);
     debug("DEBUG TEST2", false, __func__, __LINE__);
-    
-
+    ansiColorMagentaFG();
+/*
     for (long long i = 0; i < 13; i++) {
         testString = truncString("1234567890", i);
         printf("LEN:%lld  %s\n", i, testString);
@@ -601,9 +601,11 @@ int main() {
         testString = truncString("1234567890", i);
         printf("LEN:%lld  %s\n", i, testString);
     }
+*/
 
     printf("IS PIPE: %s\n", isPipe() ? "true" : "false");
 
+    /*
     for (int i = 0; i < 15; i++) {
         //char * testOutput = malloc((i + 1) * sizeof(char));
         char * testOutput = malloc(i * sizeof(char));
@@ -624,7 +626,17 @@ int main() {
             printf("\n");
         }
     }
+*/
 
+    ansiColorGreenBrightFG();
 
+    int x = 25;
+    char * testDebug = calloc(x, sizeof(char));
+    testDebug = readPipe(x);
 
+    for (int i = 0; i < x; i++) {
+        printf("[%s]  %03d  0x%hhX\n", asciiChar(testDebug[i]),  i, testDebug[i]);
+    }
+
+    ansiColorDefaultFG();
 }
