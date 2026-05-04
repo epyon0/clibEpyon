@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,7 +23,7 @@ bool isPipe() {
     return !isatty(STDIN_FILENO);
 }
 
-// Returns (nbytes + 1) from STDIN
+// Returns 'nbytes' from STDIN
 char * readPipe(size_t nbytes) {
     char * buffer = calloc(nbytes, sizeof(char));
     if (buffer && isPipe()) {
@@ -30,6 +31,36 @@ char * readPipe(size_t nbytes) {
     }
 
     return buffer;
+}
+
+// Puts the bytes read up to and not including 'delimiter' into 'result' and returns the the size of 'result'
+size_t readPipeUntilByte(char ** result, char delimiter) {
+    if (!isPipe()) {
+        *result = NULL;
+        return 0;
+    }
+
+    size_t count = 0;
+    char byte;
+    char * temp;
+    char * buffer = NULL;
+
+    while ((byte = *readPipe(1)) != delimiter && byte != EOF) {
+        ++count;
+        temp = realloc(buffer, (count + 1) * sizeof(char));
+
+        if (!temp) {
+            free(buffer);
+            *result = NULL;
+            return 0;
+        }
+
+        buffer = temp;
+        buffer[count - 1] = (char)byte;
+    }
+
+    *result = buffer;
+    return count;
 }
 
 char * asciiChar(char byte) {
@@ -630,13 +661,23 @@ int main() {
 
     ansiColorGreenBrightFG();
 
-    int x = 25;
-    char * testDebug = calloc(x, sizeof(char));
-    testDebug = readPipe(x);
-
-    for (int i = 0; i < x; i++) {
-        printf("[%s]  %03d  0x%hhX\n", asciiChar(testDebug[i]),  i, testDebug[i]);
+    char * newString;
+    size_t readBytes = readPipeUntilByte(&newString, 'L');
+    char newnewString[readBytes + 1];
+    for (int i = 0; i < readBytes; i++) {
+        newnewString[i] = newString[i];
     }
+    newnewString[readBytes] = '\0';
+    printf("READ BYTES: %lu\nREAD:\n[%s]", readBytes, newnewString);
+
+    ansiColorCyanBrightFG();
+    readBytes = readPipeUntilByte(&newString, 'n');
+    char newnewnewString[readBytes + 1];
+    for (int i = 0; i < readBytes; i++) {
+        newnewnewString[i] = newString[i];
+    }
+    newnewnewString[readBytes] = '\0';
+    printf("READ BYTES: %lu\nREAD:\n[%s]", readBytes, newnewnewString);
 
     ansiColorDefaultFG();
 }
