@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -65,116 +66,124 @@ size_t readPipeUntilByte(char ** result, char delimiter) {
 
 char * asciiChar(char byte) {
     char * output = malloc(4);
-    if (byte < 33 || byte == 127) {
-        switch (byte) {
-            case 0:
-                output = "NUL";
-                break;
-            case 1:
-                output = "SOH";
-                break;
-            case 2:
-                output = "STX";
-                break;
-            case 3:
-                output = "ETX";
-                break;
-            case 4:
-                output = "EOT";
-                break;
-            case 5:
-                output = "ENQ";
-                break;
-            case 6:
-                output = "ACK";
-                break;
-            case 7:
-                output = "BEL";
-                break;
-            case 8:
-                output = "BS ";
-                break;
-            case 9:
-                output = "HT ";
-                break;
-            case 10:
-                output = "LF ";
-                break;
-            case 11:
-                output = "VT ";
-                break;
-            case 12:
-                output = "FF ";
-                break;
-            case 13:
-                output = "CR ";
-                break;
-            case 14:
-                output = "SO ";
-                break;
-            case 15:
-                output = "SI ";
-                break;
-            case 16:
-                output = "DLE";
-                break;
-            case 17:
-                output = "DC1";
-                break;
-            case 18:
-                output = "DC2";
-                break;
-            case 19:
-                output = "DC3";
-                break;
-            case 20:
-                output = "DC4";
-                break;
-            case 21:
-                output = "NAK";
-                break;
-            case 22:
-                output = "SYN";
-                break;
-            case 23:
-                output = "ETB";
-                break;
-            case 24:
-                output = "CAN";
-                break;
-            case 25:
-                output = "EM ";
-                break;
-            case 26:
-                output = "SUB";
-                break;
-            case 27:
-                output = "ESC";
-                break;
-            case 28:
-                output = "FS ";
-                break;
-            case 29:
-                output = "GS ";
-                break;
-            case 30:
-                output = "RS ";
-                break;
-            case 31:
-                output = "US ";
-                break;
-            case 32:
-                output = "SP ";
-                break;
-            case 127:
-                output = "DEL";
-                break;
-            
-        }
-    } else {
-        snprintf(output, sizeof(output), " %c ", byte);
+    switch (byte) {
+        case 0:
+            output = "NUL";
+            break;
+        case 1:
+            output = "SOH";
+            break;
+        case 2:
+            output = "STX";
+            break;
+        case 3:
+            output = "ETX";
+            break;
+        case 4:
+            output = "EOT";
+            break;
+        case 5:
+            output = "ENQ";
+            break;
+        case 6:
+            output = "ACK";
+            break;
+        case 7:
+            output = "BEL";
+            break;
+        case 8:
+            output = "BS ";
+            break;
+        case 9:
+            output = "HT ";
+            break;
+        case 10:
+            output = "LF ";
+            break;
+        case 11:
+            output = "VT ";
+            break;
+        case 12:
+            output = "FF ";
+            break;
+        case 13:
+            output = "CR ";
+            break;
+        case 14:
+            output = "SO ";
+            break;
+        case 15:
+            output = "SI ";
+            break;
+        case 16:
+            output = "DLE";
+            break;
+        case 17:
+            output = "DC1";
+            break;
+        case 18:
+            output = "DC2";
+            break;
+        case 19:
+            output = "DC3";
+            break;
+        case 20:
+            output = "DC4";
+            break;
+        case 21:
+            output = "NAK";
+            break;
+        case 22:
+            output = "SYN";
+            break;
+        case 23:
+            output = "ETB";
+            break;
+        case 24:
+            output = "CAN";
+            break;
+        case 25:
+            output = "EM ";
+            break;
+        case 26:
+            output = "SUB";
+            break;
+        case 27:
+            output = "ESC";
+            break;
+        case 28:
+            output = "FS ";
+            break;
+        case 29:
+            output = "GS ";
+            break;
+        case 30:
+            output = "RS ";
+            break;
+        case 31:
+            output = "US ";
+            break;
+        case 32:
+            output = "SP ";
+            break;
+        case 127:
+            output = "DEL";
+            break;
+        default:
+            snprintf(output, 4, " %c ", byte);
+            break;
     }
+
     return  output;
+}
+
+void ppBytes(char * bytes, size_t size) {
+    for (int i = 0; i < size; i++) {
+        printf("%08b 0x%02X [%3.3s]   ", (uint8_t)bytes[i], (uint8_t)bytes[i], asciiChar(bytes[i]));
+        if ((i + 1) % 8 == 0) {
+            printf("\n");
+        }
+    }
 }
 
 // Truncate string to length
@@ -229,6 +238,10 @@ if (number >= pow(2,60)) {
 
     return buffer;
 }
+
+////////////////////
+// ANSI FUNCTIONS //
+////////////////////
 
 /////////////////
 // ANSI CURSOR //
@@ -608,8 +621,177 @@ void ansiScreenModeLineWrappingReset() {
     printf("\033[=7l");
 }
 
+///////////////////////
+// NETWORK FUNCTIONS //
+///////////////////////
 
+size_t generateIcmpDatagram(char ** icmpDatagram, uint8_t type, uint8_t code, uint16_t checksum, 
+uint8_t pointer, uint32_t gatewayInternetAddress, uint16_t identifier, uint16_t sequenceNumber, 
+uint32_t originateTimestamp, uint32_t receiveTimestamp, uint32_t transmitTimestamp,
+uint32_t internetHeader, char * data, size_t dataLength) {
+    
+    char * buffer = NULL;
+    size_t count;
 
+    switch (type) {
+        case 0:  // Echo Reply Message
+            buffer = calloc(8 + dataLength, sizeof(char));
+
+            buffer[0] = type;
+            buffer[1] = code;
+            buffer[2] = (char)(checksum >> 8);
+            buffer[3] = (char)(checksum);
+            buffer[4] = (char)(identifier >> 8);
+            buffer[5] = (char)(identifier);
+            buffer[6] = (char)(sequenceNumber >> 8);
+            buffer[7] = (char)(sequenceNumber);
+
+            for (int i = 0; i < dataLength; i++) {
+                buffer[8 + i] = data[i];
+            }
+
+            *icmpDatagram = buffer;
+            free(buffer);
+            return 8 + dataLength;
+            break;
+        case 3:  // Destination Unreachable Message
+            buffer = calloc(12, sizeof(char));
+
+            buffer[0]  = type;
+            buffer[1]  = code;
+            buffer[2]  = (char)(checksum >> 8);
+            buffer[3]  = (char)(checksum);
+            buffer[8]  = (char)(internetHeader >> 24);
+            buffer[9]  = (char)(internetHeader >> 16);
+            buffer[10] = (char)(internetHeader >>  8);
+            buffer[11] = (char)(internetHeader);
+
+            *icmpDatagram = buffer;
+            free(buffer);
+            return 12;
+            break;
+        case 4:  // Source Quench Message
+            buffer = calloc(12, sizeof(char));
+
+            buffer[0]  = type;
+            buffer[1]  = code;
+            buffer[2]  = (char)(checksum >> 8);
+            buffer[3]  = (char)(checksum);
+            buffer[8]  = (char)(internetHeader >> 24);
+            buffer[9]  = (char)(internetHeader >> 16);
+            buffer[10] = (char)(internetHeader >>  8);
+            buffer[11] = (char)(internetHeader);
+
+            *icmpDatagram = buffer;
+            free(buffer);
+            return 12;
+            break;
+        case 5:
+            buffer = calloc(12, sizeof(char));
+
+            buffer[0]  = type;
+            buffer[1]  = code;
+            buffer[2]  = (char)(checksum >> 8);
+            buffer[3]  = (char)(checksum);
+            buffer[4]  = (char)(gatewayInternetAddress >> 24);
+            buffer[5]  = (char)(gatewayInternetAddress >> 16);
+            buffer[6]  = (char)(gatewayInternetAddress >>  8);
+            buffer[7]  = (char)(gatewayInternetAddress);
+            buffer[8]  = (char)(internetHeader >> 24);
+            buffer[9]  = (char)(internetHeader >> 16);
+            buffer[10] = (char)(internetHeader >>  8);
+            buffer[11] = (char)(internetHeader);
+
+            *icmpDatagram = buffer;
+            free(buffer);
+            return 12;
+            break;
+        case 8:
+            buffer = calloc(8 + dataLength, sizeof(char));
+
+            buffer[0] = type;
+            buffer[1] = code;
+            buffer[2] = (char)(checksum >> 8);
+            buffer[3] = (char)(checksum);
+            buffer[4] = (char)(identifier >> 8);
+            buffer[5] = (char)(identifier);
+            buffer[6] = (char)(sequenceNumber >> 8);
+            buffer[7] = (char)(sequenceNumber);
+
+            for (int i = 0; i < dataLength; i++) {
+                buffer[8 + i] = data[i];
+            }
+
+            *icmpDatagram = buffer;
+            free(buffer);
+            return 8 + dataLength;
+            break;
+        case 11:
+            buffer = calloc(12, sizeof(char));
+
+            buffer[0]  = type;
+            buffer[1]  = code;
+            buffer[2]  = (char)(checksum >> 8);
+            buffer[3]  = (char)(checksum);
+            buffer[8]  = (char)(internetHeader >> 24);
+            buffer[9]  = (char)(internetHeader >> 16);
+            buffer[10] = (char)(internetHeader >>  8);
+            buffer[11] = (char)(internetHeader);
+
+            *icmpDatagram = buffer;
+            free(buffer);
+            return 12;
+            break;
+        case 12:
+            buffer = calloc(12, sizeof(char));
+
+            buffer[0]  = type;
+            buffer[1]  = code;
+            buffer[2]  = (char)(checksum >> 8);
+            buffer[3]  = (char)(checksum);
+            buffer[4]  = pointer;
+            buffer[8]  = (char)(internetHeader >> 24);
+            buffer[9]  = (char)(internetHeader >> 16);
+            buffer[10] = (char)(internetHeader >>  8);
+            buffer[11] = (char)(internetHeader);
+
+            *icmpDatagram = buffer;
+            free(buffer);
+            return 12;
+            break;
+        case 13:
+            buffer = calloc(20, sizeof(char));
+
+            buffer[0]  = type;
+            buffer[1]  = code;
+            buffer[2]  = (char)(checksum >> 8);
+            buffer[3]  = (char)(checksum);
+            buffer[4]  = (char)(identifier >> 8);
+            buffer[5]  = (char)(identifier);
+            buffer[6]  = (char)(sequenceNumber >> 8);
+            buffer[7]  = (char)(sequenceNumber);
+            buffer[8]  = (char)(originateTimestamp >> 24);
+            buffer[9]  = (char)(originateTimestamp >> 16);
+            buffer[10] = (char)(originateTimestamp >>  8);
+            buffer[11] = (char)(originateTimestamp);
+            buffer[12] = (char)(receiveTimestamp >> 24);
+            buffer[13] = (char)(receiveTimestamp >> 16);
+            buffer[14] = (char)(receiveTimestamp >>  8);
+            buffer[12] = (char)(receiveTimestamp);
+            buffer[13] = (char)(transmitTimestamp >> 24);
+            buffer[14] = (char)(transmitTimestamp >> 16);
+            buffer[15] = (char)(transmitTimestamp >>  8);
+            buffer[16] = (char)(transmitTimestamp);
+
+            *icmpDatagram = buffer;
+            free(buffer);
+            return 20;
+            break;
+        case 14:
+        case 15:
+        case 16:
+    }
+}
 
 
 
@@ -678,6 +860,32 @@ int main() {
     }
     newnewnewString[readBytes] = '\0';
     printf("READ BYTES: %lu\nREAD:\n[%s]", readBytes, newnewnewString);
+
+    ansiColorYellowBrightFG();
+
+    printf("\n");
+    ppBytes(newnewnewString, 22);
+    printf("\n");
+
+
+    ansiColorGreenBrightFG();
+
+    char * datagram = NULL;
+    size_t datagramSize = generateIcmpDatagram(&datagram, 8, 0, 1337, 0, 0, 0, 0, 0, 0, 0, 0, "this is a test", sizeof("this is a test"));
+    printf("DATAGRAM SIZE: %lu\n", datagramSize);
+    ppBytes(datagram, datagramSize);
+
+    ansiColorYellowFG();
+    printf("\n");
+    size_t testSize = 275;
+    char * testPtr = malloc(testSize);
+    if (testPtr) {
+        ppBytes(testPtr, testSize);
+        printf("\n\n");
+        free(testPtr);
+    }
+    
+
 
     ansiColorDefaultFG();
 }
